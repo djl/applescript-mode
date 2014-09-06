@@ -98,66 +98,50 @@ for a block opening statement are given this extra offset."
 
 ;; Face Setting
 
-;; Face for true, false, me, it
-(defvar as-pseudo-keyword-face 'as-pseudo-keyword-face
-  "Face for pseudo keywords in AppleScript mode, like me, true, false.")
-(make-face 'as-pseudo-keyword-face)
-
 ;; Face for command
 (defvar as-command-face 'as-command-face
   "Face for command like copy, get, set, and error.")
 (make-face 'as-command-face)
 
 (defun as-font-lock-mode-hook ()
-  (or (face-differs-from-default-p 'as-pseudo-keyword-face)
-      (copy-face 'font-lock-keyword-face 'as-pseudo-keyword-face))
   (or (face-differs-from-default-p 'as-command-face)
       (copy-face 'font-lock-keyword-face 'as-command-face)))
 (add-hook 'font-lock-mode-hook 'as-font-lock-mode-hook)
 
+;; keywords
+(defvar applescript-keywords
+  '("AGStart" "ASCII[ \t]character" "ASCII[ \t]number" "about" "above"
+    "activate" "after" "against" "and" "apart from" "app" "application"
+    "around" "as" "aside from" "at" "back" "beep" "copy" "before" "beginning"
+    "behind" "below" "beneath" "beside" "between" "but" "buttons" "by"
+    "choose[ \t]application" "choose[ \t]file" "choose[ \t]folder"
+    "close[ \t]access" "considering" "contain" "contains" "continue"
+    "copy" "count" "current[ \t]date" "default[ \t]answer" "default[ \t]button"
+    "display[ \t]dialog" "div" "does" "eighth" "else" "end" "equal" "equals"
+    "error" "every""exit" "false" "fifth" "first" "for" "fourth" "from"
+    "front" "get" "get[ \t]EOF" "given" "global" "if" "ignoring" "in"
+    "info[ \t]for" "instead of" "into" "is" "it" "its" "last" "launch"
+    "list[ \t]disks" "list[ \t]folder" "load[ \t]script" "local"
+    "log" "max[ \t]monitor[ \t]depth" "me" "middle" "min[ \t]monitor[ \t]depth"
+    "mod" "monitor[ \t]depth" "my" "new[ \t]file" "ninth" "not" "of" "offset"
+    "on" "onto" "open[ \t]for[ \t]access" "or" "out of" "over" "path[ \t]to"
+    "prop" "property" "put" "random[ \t]number" "read" "ref" "reference"
+    "reopen" "repeat" "return" "returning" "round" "run" "run[ \t]script"
+    "script" "scripting[ \t]component" "second" "set" "set[ \t]EOF"
+    "set[ \t]monitor[ \t]depth" "set[ \t]volume" "seventh" "since" "sixth"
+    "some" "start[ \t]log" "starting[ \t]at" "stop[ \t]log" "store[ \t]script"
+    "tell" "tenth" "that" "the" "then" "third" "through" "thru"
+    "time[ \t]to[ \t]GMT" "timeout" "times" "to" "to[ \t]begining[ \t]of"
+    "to[ \t]word" "transaction" "true" "try" "until" "using[ \t]terms[ \t]from"
+    "where" "while" "whose" "with" "with[ \t]icon" "with[ \t]timeout"
+    "with[ \t]transaction" "without" "write" "write[ \t]permission"))
+
 (defvar applescript-font-lock-keywords
-  (let (
-        ;; expressions and control Statements
-        (kw1 (regexp-opt
-              '("and" "app" "application" "considering" "div"
-                "else" "end" "exit" "is" "mod" "not" "on" "or"
-                "if" "ignoring" "reopen" "repeat"
-                "tell" "then" "to"
-                "using[ \t]terms[ \t]from"
-                "with[ \t]timeout" "with[ \t]transaction")))
-        ;; commands
-        (kw2 (regexp-opt
-              '("ASCII[ \t]character" "ASCII[ \t]number" "activate" "AGStart"
-                "beep"  "copy" "count" "choose[ \t]application"
-                "choose[ \t]file" "choose[ \t]folder" "close[ \t]access"
-                "current[ \t]date" "display[ \t]dialog" "get" "get[ \t]EOF"
-                "info[ \t]for" "launch" "list[ \t]disks" "list[ \t]folder"
-                "load[ \t]script" "log" "monitor[ \t]depth" "max[ \t]monitor[ \t]depth"
-                "min[ \t]monitor[ \t]depth" "new[ \t]file" "offset"
-                "open[ \t]for[ \t]access" "path[ \t]to" "random[ \t]number"
-                "read" "round" "run" "run[ \t]script" "scripting[ \t]component"
-                "set" "set[ \t]EOF" "set[ \t]monitor[ \t]depth" "set[ \t]volume"
-                "start[ \t]log" "stop[ \t]log" "store[ \t]script"
-                "time[ \t]to[ \t]GMT" "write")))
-        ;; misc
-        (kw3 (regexp-opt
-              '("buttons" "default[ \t]answer" "default[ \t]button"
-                "to[ \t]begining[ \t]of" "to[ \t]word" "starting[ \t]at"
-                "with[ \t]icon" "write[ \t]permission"))))
-    (list
-     ;; keywords
-     (cons (concat "\\b\\(" kw1 "\\)\\b[ \n\t(]") 1)
-     (cons (concat "\\b\\(" kw2 "\\)\\b[ \n\t(]") 1)
-     ;; kw3 not yet..
-     (cons (concat "\\b\\(" kw3 "\\)\\b[ \n\t(]") 1)
-     ;; functions
-     '("\\bon[ \t]+\\([a-zA-Z_]+[a-zA-Z0-9_]*\\)"
-       1 font-lock-function-name-face)
-     '("\\bto[ \t]+\\([a-zA-Z_]+[a-zA-Z0-9_]*\\)"
-       1 font-lock-function-name-face)
-     ;; pseudo-keywords
-     '("\\b\\(it\\|me\\|my\\|true\\|false\\)\\b"
-       1 as-pseudo-keyword-face))))
+  (list
+   ;; keywords
+   (cons (concat "\\b\\(" (regexp-opt applescript-keywords) "\\)\\b[ \n\t(]") 1)
+   ;; functions
+   '("\\bon[ \t]+\\([a-zA-Z_]+[a-zA-Z0-9_]*\\)" 1 font-lock-function-name-face)))
 (put 'applescript-mode 'font-lock-defaults '(applescript-font-lock-keywords))
 
 ;; Major mode boilerplate
@@ -184,7 +168,8 @@ for a block opening statement are given this extra offset."
 
   ;; Miscellaneous
   (define-key as-mode-map "\C-c;" 'comment-region)
-  (define-key as-mode-map "\C-c:" 'uncomment-region))
+  (define-key as-mode-map "\C-c:" 'uncomment-region)
+  (define-key as-mode-map (kbd "C-c RET") 'as-line-break))
 
 (defvar as-mode-syntax-table nil
   "Syntax table used in `applescript-mode' buffers.")
@@ -226,9 +211,9 @@ for a block opening statement are given this extra offset."
 ;; Utilities
 (defmacro as-safe (&rest body)
   "Safely execute BODY, return nil if an error occurred."
-  (` (condition-case nil
-         (progn (,@ body))
-       (error nil))))
+  `(condition-case nil
+       (progn ,@ body)
+     (error nil)))
 
 (defsubst as-keep-region-active ()
   "Keep the region active in XEmacs."
@@ -343,7 +328,8 @@ contain this package.")
     (run-hooks 'applescript-mode-hook)))
 
 (when (not (or (rassq 'applescript-mode auto-mode-alist)
-  (push '("\\.applescript$" . applescript-mode) auto-mode-alist))))
+  (push '("\\.applescript$" . applescript-mode) auto-mode-alist)
+  (push '("\\.scpt$" . applescript-mode) auto-mode-alist))))
 
 ;;; Subprocess commands
 
@@ -435,6 +421,14 @@ contain this package.")
   "do-applescript return values encode sjis-mac"
   (encode-coding-string str 'sjis-mac))
 
+(defun as-line-break ()
+  "Insert the Applescript line continuation character."
+  (interactive)
+  (if (not (= (char-before) 32))
+      (insert " "))
+  (insert "¬")
+  (newline))
+
 (defun as-parse-result (retstr)
   "String convert to Emacs Lisp Object"
   (cond
@@ -458,8 +452,8 @@ contain this package.")
    ((string-match "\\`\\s-*\\([0-9]+\\)\\s-*\\'" retstr)
     (string-to-int (match-string 1 retstr)))
 
-    ;; else
-    (t (intern retstr))))
+   ;; else
+   (t (intern retstr))))
 
 (provide 'applescript-mode)
 ;;; applescript-mode.el ends here
